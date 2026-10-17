@@ -24,3 +24,11 @@ application-local.yml
 # Windows and macOS
 Thumbs.db
 .DS_Store
+
+
+# Eclipse workspace and generated files
+backend/.metadata/
+backend/bin/
+backend/.classpath
+backend/.project
+backend/.settings/

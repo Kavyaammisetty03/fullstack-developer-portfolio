@@ -96,3 +96,9 @@ Important:
 Update this file after completing each major task.
 Record what was implemented, what was learned,
 any issues encountered, and the next task.
+
+Update the relevant sections to reflect the current status:
+- Phase 1: Mark the project directories, .gitignore, README, and initial Git staging as completed.
+- Phase 2: Mark Spring Boot setup, PostgreSQL connection, and the initial REST controller as completed. Mark the entity/repository/service architecture and security as pending.
+- Phase 3: Mark React setup, the initial portfolio layout, and frontend-to-backend API integration as completed.
+- Next Task: Create the initial Git commit and push it to GitHub, then implement the proper backend layers.
