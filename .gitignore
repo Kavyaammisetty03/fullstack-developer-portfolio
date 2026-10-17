@@ -1,0 +1,26 @@
+
+# Java and Maven
+**/target/
+*.class
+*.log
+
+# React and Node.js
+**/node_modules/
+**/dist/
+**/build/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+application-local.properties
+application-local.yml
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+
+# Windows and macOS
+Thumbs.db
+.DS_Store
