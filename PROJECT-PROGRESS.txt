@@ -1,0 +1,98 @@
+# FULL-STACK DEVELOPER PORTFOLIO — PROJECT PROGRESS
+
+Project Name: Full-Stack Developer Portfolio
+Technology Stack: Java, Spring Boot, React, PostgreSQL, Git
+Project Status: In Progress
+
+--------------------------------------------------
+PHASE 1: PROJECT SETUP AND VERSION CONTROL
+--------------------------------------------------
+
+Completed:
+- Verified Git, Java, Node.js and npm installations.
+- Created a GitHub repository named fullstack-developer-portfolio.
+- Cloned the repository to the local Windows machine.
+- Created the following project directories:
+  - backend/
+  - frontend/
+  - docs/
+
+In Progress:
+- Creating the root .gitignore file.
+- Creating the README.md file.
+- Preparing the initial Git commit and push.
+
+GitHub Repository:
+https://github.com/Kavyaammisetty03/fullstack-developer-portfolio
+
+--------------------------------------------------
+PHASE 2: SPRING BOOT BACKEND
+--------------------------------------------------
+
+Status: Not Started
+
+Planned Tasks:
+- Generate a Spring Boot Maven project.
+- Configure Java and required dependencies.
+- Understand the layered architecture.
+- Create Entity, Repository, Service and Controller layers.
+- Develop REST APIs for portfolio data.
+- Integrate PostgreSQL.
+- Implement admin authentication and authorization.
+- Add exception handling and validation.
+- Test APIs using Postman and JUnit.
+
+--------------------------------------------------
+PHASE 3: REACT FRONTEND
+--------------------------------------------------
+
+Status: Not Started
+
+Planned Tasks:
+- Set up the React application.
+- Create reusable UI components.
+- Build Home, About, Skills and Projects sections.
+- Add resume download and contact form.
+- Integrate frontend with backend REST APIs.
+- Make the application responsive.
+
+--------------------------------------------------
+PHASE 4: TESTING AND GIT WORKFLOW
+--------------------------------------------------
+
+Status: Not Started
+
+Planned Tasks:
+- Test backend APIs and frontend functionality.
+- Fix bugs and validate user inputs.
+- Use feature branches and meaningful commits.
+- Review changes and update documentation.
+
+--------------------------------------------------
+PHASE 5: DEPLOYMENT
+--------------------------------------------------
+
+Status: Not Started
+
+Planned Tasks:
+- Prepare production configuration.
+- Deploy the React frontend and Spring Boot backend.
+- Configure the production database.
+- Protect credentials using environment variables.
+- Update the README with setup instructions and live links.
+
+--------------------------------------------------
+DEVELOPMENT NOTES
+--------------------------------------------------
+
+Current Stage:
+Initial repository setup.
+
+Next Task:
+Finish .gitignore and README.md, then create the
+first Git commit and push it to GitHub.
+
+Important:
+Update this file after completing each major task.
+Record what was implemented, what was learned,
+any issues encountered, and the next task.
