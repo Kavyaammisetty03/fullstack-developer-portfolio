@@ -2,9 +2,12 @@
 package com.kavya.portfolio.service;
 
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.kavya.portfolio.entity.Project;
 import com.kavya.portfolio.repository.ProjectRepository;
@@ -18,36 +21,76 @@ public class ProjectService {
         this.projectRepository = projectRepository;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Project> getAllProjects() {
+        return projectRepository.findAllByOrderByIdAsc();
+    }
 
-        if (projectRepository.count() == 0) {
-            List<Project> initialProjects = List.of(
-                new Project(
-                    "Library Management Application",
-                    "Developed a library management backend using Java, Spring Boot, and PostgreSQL. Implemented authentication, role-based access, book search, uploads, availability checks, purchases, and returns using a layered architecture.",
-                    "Java, Spring Boot, PostgreSQL, Spring Data JPA, Spring Security, Maven, Git"
-                ),
-                new Project(
-                    "RailPharma",
-                    "Developed a medicine delivery website that helps users browse medicines, view product details, and conveniently explore medicine ordering functionality.",
-                    "HTML, CSS, JavaScript, SQL, React"
-                ),
-                new Project(
-                    "AI Road Safety System",
-                    "Developed a road safety application featuring user registration, login, a vehicle and road information dashboard, route analysis, and pothole image detection with detected areas highlighted in red.",
-                    "AI, Python, Web Development"
-                ),
-                new Project(
-                    "Fitness Tracker",
-                    "Created a fitness application with yoga poses, exercises, and wellness activities designed to encourage healthy routines for children and adults.",
-                    "HTML, CSS, JavaScript"
-                )
-            );
+    @Transactional(readOnly = true)
+    public Project getProjectById(Long id) {
+        return projectRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Project not found"));
+    }
 
-            projectRepository.saveAll(initialProjects);
+    @Transactional
+    public Project addProject(Map<String, String> request) {
+        return projectRepository.save(new Project(
+                required(request, "title"),
+                required(request, "description"),
+                required(request, "technologies")
+        ));
+    }
+
+    @Transactional
+    public Project replaceProject(Long id, Map<String, String> request) {
+        Project project = getProjectById(id);
+
+        project.setTitle(required(request, "title"));
+        project.setDescription(required(request, "description"));
+        project.setTechnologies(required(request, "technologies"));
+
+        return projectRepository.save(project);
+    }
+
+    @Transactional
+    public Project patchProject(Long id, Map<String, String> request) {
+        Project project = getProjectById(id);
+
+        if (request == null || request.isEmpty()) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Provide at least one field");
         }
 
-        return projectRepository.findAllByOrderByIdAsc();
+        if (request.containsKey("title")) {
+            project.setTitle(required(request, "title"));
+        }
+
+        if (request.containsKey("description")) {
+            project.setDescription(required(request, "description"));
+        }
+
+        if (request.containsKey("technologies")) {
+            project.setTechnologies(required(request, "technologies"));
+        }
+
+        return projectRepository.save(project);
+    }
+
+    @Transactional
+    public void deleteProject(Long id) {
+        Project project = getProjectById(id);
+        projectRepository.delete(project);
+    }
+
+    private String required(Map<String, String> request, String field) {
+        String value = request == null ? null : request.get(field);
+
+        if (value == null || value.isBlank()) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, field + " is required");
+        }
+
+        return value.trim();
     }
 }

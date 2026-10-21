@@ -10,4 +10,5 @@ import com.kavya.portfolio.entity.Skill;
 public interface SkillRepository extends JpaRepository<Skill, Long> {
 
     List<Skill> findAllByOrderByIdAsc();
+    boolean existsByNameIgnoreCase(String name);
 }
