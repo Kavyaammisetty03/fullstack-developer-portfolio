@@ -30,6 +30,11 @@ public class SkillService {
     }
 
     @Transactional(readOnly = true)
+    public List<Skill> getAllSkills() {
+        return skillRepository.findAllByOrderByIdAsc();
+    }
+
+    @Transactional(readOnly = true)
     public Skill getSkillById(Long id) {
         return skillRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(

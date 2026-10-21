@@ -170,3 +170,15 @@ END OF PROJECT PROGRESS
 - Protected write operations with HTTP Basic authentication.
 - Tested authenticated skill creation, update, and deletion.
 - Verified that deleted test skills return 404.
+
+
+
+[2026-10-21] Admin Skills Management
+- Added an authenticated backend endpoint to retrieve skill records for administration.
+- Protected the skill management endpoint using Spring Security.
+- Connected the React Admin page to the backend management API.
+- Added and tested skill creation.
+- Fixed the Edit button to populate the selected skill details in the form.
+- Tested updating a skill successfully.
+- Preserved the public skills API response used by the portfolio homepage.
+- Verified the frontend production build with npm run build.

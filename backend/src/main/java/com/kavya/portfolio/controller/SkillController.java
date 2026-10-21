@@ -31,9 +31,16 @@ public class SkillController {
         this.skillService = skillService;
     }
 
+    // Public endpoint: used by the portfolio website.
     @GetMapping
     public List<String> getSkills() {
         return skillService.getSkillNames();
+    }
+
+    // Management endpoint: returns complete skill records for the Admin page.
+    @GetMapping("/manage")
+    public List<Skill> getSkillsForManagement() {
+        return skillService.getAllSkills();
     }
 
     @GetMapping("/{id}")
@@ -44,8 +51,8 @@ public class SkillController {
     @PostMapping
     public ResponseEntity<Skill> addSkill(
             @RequestBody Map<String, String> request) {
-        Skill skill = skillService.addSkill(request);
 
+        Skill skill = skillService.addSkill(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(skill);
     }
 
@@ -53,6 +60,7 @@ public class SkillController {
     public Skill replaceSkill(
             @PathVariable Long id,
             @RequestBody Map<String, String> request) {
+
         return skillService.replaceSkill(id, request);
     }
 
@@ -60,6 +68,7 @@ public class SkillController {
     public Skill patchSkill(
             @PathVariable Long id,
             @RequestBody Map<String, String> request) {
+
         return skillService.patchSkill(id, request);
     }
 
