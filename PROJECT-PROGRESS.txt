@@ -102,3 +102,29 @@ Update the relevant sections to reflect the current status:
 - Phase 2: Mark Spring Boot setup, PostgreSQL connection, and the initial REST controller as completed. Mark the entity/repository/service architecture and security as pending.
 - Phase 3: Mark React setup, the initial portfolio layout, and frontend-to-backend API integration as completed.
 - Next Task: Create the initial Git commit and push it to GitHub, then implement the proper backend layers.
+
+
+Day 2:
+
+
+PROJECT PROGRESS UPDATE — 21 October 2026
+
+Completed:
+- Created the Portfolio entity using JPA.
+- Created PortfolioRepository using Spring Data JPA.
+- Created PortfolioService for business logic.
+- Created PortfolioController for the REST API.
+- Connected portfolio data to PostgreSQL.
+- Tested GET /api/portfolio successfully.
+- Started the React frontend successfully.
+- Verified frontend and backend integration.
+
+Current Stage:
+Initial portfolio backend and frontend integration.
+
+Next Tasks:
+- Commit and push the completed backend changes.
+- Improve the portfolio Home section.
+- Build Skills, Projects and Contact sections.
+- Add resume download functionality.
+- Implement authentication and authorization for protected project downloads.
