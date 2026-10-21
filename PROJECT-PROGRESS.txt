@@ -1,130 +1,152 @@
-# FULL-STACK DEVELOPER PORTFOLIO — PROJECT PROGRESS
+# FULL-STACK DEVELOPER PORTFOLIO - PROJECT PROGRESS
 
 Project Name: Full-Stack Developer Portfolio
-Technology Stack: Java, Spring Boot, React, PostgreSQL, Git
+Technology Stack: Java 21, Spring Boot 4.0.8, React, Vite, PostgreSQL, Maven, Git
 Project Status: In Progress
-
---------------------------------------------------
-PHASE 1: PROJECT SETUP AND VERSION CONTROL
---------------------------------------------------
-
-Completed:
-- Verified Git, Java, Node.js and npm installations.
-- Created a GitHub repository named fullstack-developer-portfolio.
-- Cloned the repository to the local Windows machine.
-- Created the following project directories:
-  - backend/
-  - frontend/
-  - docs/
-
-In Progress:
-- Creating the root .gitignore file.
-- Creating the README.md file.
-- Preparing the initial Git commit and push.
 
 GitHub Repository:
 https://github.com/Kavyaammisetty03/fullstack-developer-portfolio
 
---------------------------------------------------
+Last Updated: 21 October 2026
+
+==================================================
+PHASE 1: PROJECT SETUP AND VERSION CONTROL
+==================================================
+
+Completed:
+- Created and cloned the GitHub repository.
+- Set up the backend, frontend, and docs directories.
+- Initialized Git version control and the main branch.
+- Created the initial project setup commit and pushed it.
+- Continued committing and pushing completed project tasks.
+
+Pending / To Verify:
+- Review the root .gitignore file.
+- Review and complete README.md documentation.
+- Ensure passwords, tokens, and other secrets are never committed.
+
+==================================================
 PHASE 2: SPRING BOOT BACKEND
---------------------------------------------------
+==================================================
 
-Status: Not Started
+Completed:
+- Set up the Spring Boot Maven backend.
+- Configured Java 21 and Spring Boot 4.0.8.
+- Configured PostgreSQL database connectivity.
+- Configured Spring Data JPA and Hibernate.
+- Created the Portfolio entity.
+- Created PortfolioRepository.
+- Created PortfolioService.
+- Created PortfolioController in the controller package.
+- Implemented the GET /api/portfolio REST endpoint.
+- Verified the portfolio API at http://localhost:8080/api/portfolio.
+- Configured CORS for the local React frontend.
 
-Planned Tasks:
-- Generate a Spring Boot Maven project.
-- Configure Java and required dependencies.
-- Understand the layered architecture.
-- Create Entity, Repository, Service and Controller layers.
-- Develop REST APIs for portfolio data.
-- Integrate PostgreSQL.
-- Implement admin authentication and authorization.
-- Add exception handling and validation.
-- Test APIs using Postman and JUnit.
+Pending:
+- Review and improve the backend layers as needed.
+- Add validation and centralized exception handling.
+- Implement Spring Security and authentication.
+- Implement role-based authorization for protected operations.
+- Secure project downloads through backend authorization.
+- Add suitable automated tests.
 
---------------------------------------------------
+==================================================
 PHASE 3: REACT FRONTEND
---------------------------------------------------
+==================================================
 
-Status: Not Started
+Completed:
+- Set up the React application using Vite.
+- Created the portfolio layout and navigation.
+- Added the Home, About, Skills, Projects, AI interests,
+  Certifications, and Contact content.
+- Added the profile photo.
+- Added the resume PDF and download functionality.
+- Added Java and SQL certificate previews and downloads.
+- Added project descriptions for portfolio projects.
+- Improved page styling and corrected unwanted white
+  vertical lines along the page edges.
+- Started the frontend successfully at http://localhost:5173.
+- Verified the initial frontend and backend integration.
+- Visually checked the portfolio, profile photo, resume,
+  certificates, and project sections.
 
-Planned Tasks:
-- Set up the React application.
-- Create reusable UI components.
-- Build Home, About, Skills and Projects sections.
-- Add resume download and contact form.
-- Integrate frontend with backend REST APIs.
-- Make the application responsive.
+Frontend assets:
+- frontend/public/images/kavya-profile.jpeg
+- frontend/public/kavya-resume.pdf
+- frontend/public/certificates/java-certificate.pdf
+- frontend/public/certificates/sql-certificate.pdf
 
---------------------------------------------------
-PHASE 4: TESTING AND GIT WORKFLOW
---------------------------------------------------
+Pending:
+- Connect the Skills section to backend API data.
+- Review which portfolio sections should load dynamically.
+- Add and test a contact form with backend integration.
+- Improve responsive behavior across screen sizes.
+- Verify the final frontend against the running backend.
 
-Status: Not Started
+==================================================
+PHASE 4: TESTING AND VERSION CONTROL
+==================================================
 
-Planned Tasks:
-- Test backend APIs and frontend functionality.
-- Fix bugs and validate user inputs.
-- Use feature branches and meaningful commits.
-- Review changes and update documentation.
+Completed:
+- Used Git to track portfolio changes.
+- Checked whitespace using git diff --check.
+- Committed and pushed the resume, certificates, profile
+  photo, and frontend styling/content updates.
 
---------------------------------------------------
+Latest verified commit:
+84ff141 - Add resume and certificate downloads
+
+Pending:
+- Test new backend and frontend changes after each task.
+- Add backend unit and integration tests.
+- Continue using meaningful commit messages.
+- Update this progress file after each major task.
+
+==================================================
 PHASE 5: DEPLOYMENT
---------------------------------------------------
+==================================================
 
 Status: Not Started
 
 Planned Tasks:
 - Prepare production configuration.
-- Deploy the React frontend and Spring Boot backend.
-- Configure the production database.
-- Protect credentials using environment variables.
-- Update the README with setup instructions and live links.
+- Choose hosting for the frontend and backend.
+- Configure a production PostgreSQL database.
+- Store credentials securely in environment variables.
+- Deploy and test the application.
+- Update README.md with setup and deployment instructions.
 
---------------------------------------------------
-DEVELOPMENT NOTES
---------------------------------------------------
+==================================================
+CURRENT DEVELOPMENT STATUS
+==================================================
 
-Current Stage:
-Initial repository setup.
+Completed in the latest frontend task:
+- Resume download is working.
+- Java certificate preview and download are working.
+- SQL certificate preview and download are working.
+- Profile photo and project sections display correctly.
+- Unwanted white vertical page-edge lines have been fixed.
+- Changes were committed and pushed to GitHub.
+
+Latest Git commit:
+84ff141
 
 Next Task:
-Finish .gitignore and README.md, then create the
-first Git commit and push it to GitHub.
+Connect the Skills section to the Spring Boot backend and
+PostgreSQL, then test the API response and frontend display.
+
+Development Workflow:
+1. Work on one small task at a time.
+2. Use complete replacement files when code changes are needed.
+3. Run and test the application.
+4. Check Git status and review the changed files.
+5. Commit and push the verified changes.
+6. Update this file with completed work and the next task.
 
 Important:
-Update this file after completing each major task.
-Record what was implemented, what was learned,
-any issues encountered, and the next task.
+Never commit database passwords, API keys, tokens, or secrets.
+Do not mark a task completed until it has been tested.
 
-Update the relevant sections to reflect the current status:
-- Phase 1: Mark the project directories, .gitignore, README, and initial Git staging as completed.
-- Phase 2: Mark Spring Boot setup, PostgreSQL connection, and the initial REST controller as completed. Mark the entity/repository/service architecture and security as pending.
-- Phase 3: Mark React setup, the initial portfolio layout, and frontend-to-backend API integration as completed.
-- Next Task: Create the initial Git commit and push it to GitHub, then implement the proper backend layers.
-
-
-Day 2:
-
-
-PROJECT PROGRESS UPDATE — 21 October 2026
-
-Completed:
-- Created the Portfolio entity using JPA.
-- Created PortfolioRepository using Spring Data JPA.
-- Created PortfolioService for business logic.
-- Created PortfolioController for the REST API.
-- Connected portfolio data to PostgreSQL.
-- Tested GET /api/portfolio successfully.
-- Started the React frontend successfully.
-- Verified frontend and backend integration.
-
-Current Stage:
-Initial portfolio backend and frontend integration.
-
-Next Tasks:
-- Commit and push the completed backend changes.
-- Improve the portfolio Home section.
-- Build Skills, Projects and Contact sections.
-- Add resume download functionality.
-- Implement authentication and authorization for protected project downloads.
+==================================================
+END OF PROJECT PROGRESS
+==================================================
