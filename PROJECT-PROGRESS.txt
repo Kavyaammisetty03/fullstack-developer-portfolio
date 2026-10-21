@@ -150,3 +150,9 @@ Do not mark a task completed until it has been tested.
 ==================================================
 END OF PROJECT PROGRESS
 ==================================================
+[2026-10-21] Skills API Integration
+- Added the Skill entity, repository, service, and controller.
+- Connected the Skills API to PostgreSQL.
+- Removed the unresolved library-management dependency from backend/pom.xml.
+- Connected React App.jsx to GET /api/skills.
+- Tested the frontend successfully; skills are displayed.
