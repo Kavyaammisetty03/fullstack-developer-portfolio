@@ -1,3 +1,4 @@
+
 import { useEffect, useRef, useState } from 'react';
 import './AdminPage.css';
 
@@ -15,13 +16,33 @@ function AdminPage() {
   const [skillsError, setSkillsError] = useState('');
   const [skillMessage, setSkillMessage] = useState('');
   const [savingSkill, setSavingSkill] = useState(false);
-
   const [skillName, setSkillName] = useState('');
   const [skillCategory, setSkillCategory] = useState('');
   const [editingSkillId, setEditingSkillId] = useState(null);
 
+  const [projects, setProjects] = useState([]);
+  const [projectsLoading, setProjectsLoading] = useState(false);
+  const [projectsError, setProjectsError] = useState('');
+  const [projectMessage, setProjectMessage] = useState('');
+  const [savingProject, setSavingProject] = useState(false);
+  const [projectTitle, setProjectTitle] = useState('');
+  const [projectDescription, setProjectDescription] = useState('');
+  const [projectTechnologies, setProjectTechnologies] = useState('');
+  const [editingProjectId, setEditingProjectId] = useState(null);
+
   const skillFormRef = useRef(null);
   const skillNameInputRef = useRef(null);
+  const projectFormRef = useRef(null);
+  const projectTitleInputRef = useRef(null);
+
+  async function getErrorMessage(response, fallback) {
+    try {
+      const data = await response.json();
+      return data.detail || data.message || fallback;
+    } catch {
+      return fallback;
+    }
+  }
 
   async function loadSkills(authorization) {
     setSkillsLoading(true);
@@ -62,13 +83,53 @@ function AdminPage() {
     }
   }
 
+  async function loadProjects(authorization) {
+    setProjectsLoading(true);
+    setProjectsError('');
+
+    try {
+      const response = await fetch(`${API_URL}/api/projects`, {
+        headers: { Authorization: authorization },
+      });
+
+      if (response.status === 401 || response.status === 403) {
+        throw new Error('Admin authentication failed. Please sign in again.');
+      }
+
+      if (!response.ok) {
+        throw new Error(`Unable to load projects (${response.status}).`);
+      }
+
+      const data = await response.json();
+
+      if (
+        !Array.isArray(data) ||
+        data.some(
+          (project) =>
+            typeof project.id !== 'number' ||
+            typeof project.title !== 'string' ||
+            typeof project.description !== 'string' ||
+            typeof project.technologies !== 'string'
+        )
+      ) {
+        throw new Error('Unexpected response from the projects API.');
+      }
+
+      setProjects(data);
+    } catch (err) {
+      setProjectsError(err.message || 'Unable to load projects.');
+    } finally {
+      setProjectsLoading(false);
+    }
+  }
+
   async function handleLogin(event) {
     event.preventDefault();
     setError('');
     setLoading(true);
 
     try {
-      const authorization = 'Basic ' + btoa(`${username}:${password}`);
+      const authorization = `Basic ${btoa(`${username}:${password}`)}`;
 
       const response = await fetch(`${API_URL}/api/skills/manage`, {
         headers: { Authorization: authorization },
@@ -114,6 +175,7 @@ function AdminPage() {
   useEffect(() => {
     if (credentials) {
       loadSkills(credentials.authorization);
+      loadProjects(credentials.authorization);
     }
   }, [credentials]);
 
@@ -127,7 +189,6 @@ function AdminPage() {
 
   async function handleSkillSubmit(event) {
     event.preventDefault();
-
     if (!credentials) return;
 
     const name = skillName.trim();
@@ -162,32 +223,20 @@ function AdminPage() {
       }
 
       if (!response.ok) {
-        let message = `Skill request failed (${response.status}).`;
-
-        try {
-          const responseData = await response.json();
-
-          if (responseData.detail) {
-            message = responseData.detail;
-          } else if (responseData.message) {
-            message = responseData.message;
-          }
-        } catch {
-          // Keep the fallback error message.
-        }
+        const message = await getErrorMessage(
+          response,
+          `Skill request failed (${response.status}).`
+        );
 
         throw new Error(
           response.status === 409 ? 'This skill already exists.' : message
         );
       }
 
+      resetSkillForm();
       setSkillMessage(
         isEditing ? 'Skill updated successfully.' : 'Skill added successfully.'
       );
-
-      setSkillName('');
-      setSkillCategory('');
-      setEditingSkillId(null);
 
       await loadSkills(credentials.authorization);
     } catch (err) {
@@ -209,13 +258,11 @@ function AdminPage() {
     setSkillMessage('');
     setSkillsError('');
 
-    // Bring the form into view so the selected skill is visible.
     skillFormRef.current?.scrollIntoView({
       behavior: 'smooth',
       block: 'center',
     });
 
-    // Focus the name field without causing another scroll.
     window.setTimeout(() => {
       skillNameInputRef.current?.focus({ preventScroll: true });
     }, 350);
@@ -224,11 +271,9 @@ function AdminPage() {
   async function handleDeleteSkill(skill) {
     if (!credentials) return;
 
-    const confirmed = window.confirm(
-      `Are you sure you want to delete "${skill.name}"?`
-    );
-
-    if (!confirmed) return;
+    if (!window.confirm(`Are you sure you want to delete "${skill.name}"?`)) {
+      return;
+    }
 
     setSkillsError('');
     setSkillMessage('');
@@ -236,9 +281,7 @@ function AdminPage() {
     try {
       const response = await fetch(`${API_URL}/api/skills/${skill.id}`, {
         method: 'DELETE',
-        headers: {
-          Authorization: credentials.authorization,
-        },
+        headers: { Authorization: credentials.authorization },
       });
 
       if (response.status === 401 || response.status === 403) {
@@ -250,9 +293,7 @@ function AdminPage() {
       }
 
       if (editingSkillId === skill.id) {
-        setSkillName('');
-        setSkillCategory('');
-        setEditingSkillId(null);
+        resetSkillForm();
       }
 
       setSkillMessage('Skill deleted successfully.');
@@ -262,17 +303,148 @@ function AdminPage() {
     }
   }
 
+  function resetProjectForm() {
+    setProjectTitle('');
+    setProjectDescription('');
+    setProjectTechnologies('');
+    setEditingProjectId(null);
+    setProjectMessage('');
+    setProjectsError('');
+  }
+
+  async function handleProjectSubmit(event) {
+    event.preventDefault();
+    if (!credentials) return;
+
+    const title = projectTitle.trim();
+    const description = projectDescription.trim();
+    const technologies = projectTechnologies.trim();
+
+    if (!title || !description || !technologies) {
+      setProjectsError('Please complete all three project fields.');
+      return;
+    }
+
+    setSavingProject(true);
+    setProjectsError('');
+    setProjectMessage('');
+
+    const isEditing = editingProjectId !== null;
+    const url = isEditing
+      ? `${API_URL}/api/projects/${editingProjectId}`
+      : `${API_URL}/api/projects`;
+
+    try {
+      const response = await fetch(url, {
+        method: isEditing ? 'PUT' : 'POST',
+        headers: {
+          Authorization: credentials.authorization,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ title, description, technologies }),
+      });
+
+      if (response.status === 401 || response.status === 403) {
+        throw new Error('Admin authentication failed. Please sign in again.');
+      }
+
+      if (!response.ok) {
+        throw new Error(
+          await getErrorMessage(
+            response,
+            `Project request failed (${response.status}).`
+          )
+        );
+      }
+
+      resetProjectForm();
+      setProjectMessage(
+        isEditing
+          ? 'Project updated successfully.'
+          : 'Project added successfully.'
+      );
+
+      await loadProjects(credentials.authorization);
+    } catch (err) {
+      setProjectsError(err.message || 'Unable to save the project.');
+    } finally {
+      setSavingProject(false);
+    }
+  }
+
+  function startEditingProject(project) {
+    if (!project || project.id == null) {
+      setProjectsError('Unable to select this project for editing.');
+      return;
+    }
+
+    setEditingProjectId(project.id);
+    setProjectTitle(project.title);
+    setProjectDescription(project.description);
+    setProjectTechnologies(project.technologies);
+    setProjectMessage('');
+    setProjectsError('');
+
+    projectFormRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+    });
+
+    window.setTimeout(() => {
+      projectTitleInputRef.current?.focus({ preventScroll: true });
+    }, 350);
+  }
+
+  async function handleDeleteProject(project) {
+    if (!credentials) return;
+
+    if (
+      !window.confirm(
+        `Are you sure you want to delete "${project.title}"? This will remove it from your portfolio.`
+      )
+    ) {
+      return;
+    }
+
+    setProjectsError('');
+    setProjectMessage('');
+
+    try {
+      const response = await fetch(`${API_URL}/api/projects/${project.id}`, {
+        method: 'DELETE',
+        headers: { Authorization: credentials.authorization },
+      });
+
+      if (response.status === 401 || response.status === 403) {
+        throw new Error('Admin authentication failed. Please sign in again.');
+      }
+
+      if (!response.ok) {
+        throw new Error(`Unable to delete project (${response.status}).`);
+      }
+
+      if (editingProjectId === project.id) {
+        resetProjectForm();
+      }
+
+      setProjectMessage('Project deleted successfully.');
+      await loadProjects(credentials.authorization);
+    } catch (err) {
+      setProjectsError(err.message || 'Unable to delete the project.');
+    }
+  }
+
   function handleLogout() {
     setCredentials(null);
     setUsername('');
     setPassword('');
     setSkills([]);
-    setSkillName('');
-    setSkillCategory('');
-    setEditingSkillId(null);
+    setProjects([]);
+    resetSkillForm();
+    resetProjectForm();
     setError('');
     setSkillsError('');
-    setSkillMessage('');
+    setProjectsError('');
   }
 
   return (
@@ -281,7 +453,6 @@ function AdminPage() {
         <a className="admin-brand" href="/">
           Kavya<span>.</span>
         </a>
-
         <a className="admin-back-link" href="/">
           ← Back to Portfolio
         </a>
@@ -295,7 +466,6 @@ function AdminPage() {
 
           <p className="admin-eyebrow">PORTFOLIO MANAGEMENT</p>
           <h1>Admin Login</h1>
-
           <p className="admin-description">
             Sign in to access your portfolio management dashboard.
           </p>
@@ -346,7 +516,7 @@ function AdminPage() {
               <p className="admin-eyebrow">PORTFOLIO ADMINISTRATION</p>
               <h1>Manage Your Portfolio</h1>
               <p className="admin-description">
-                Add, update, and remove skills displayed on your portfolio.
+                Manage your skills and projects displayed on your portfolio.
               </p>
             </div>
 
@@ -421,7 +591,6 @@ function AdminPage() {
                 {skillMessage}
               </p>
             )}
-
             {skillsError && (
               <p className="admin-error" role="alert">
                 {skillsError}
@@ -435,7 +604,6 @@ function AdminPage() {
                 <p className="admin-eyebrow">DATABASE RECORDS</p>
                 <h2>Existing Skills</h2>
               </div>
-
               <button
                 className="admin-refresh-button"
                 type="button"
@@ -467,7 +635,6 @@ function AdminPage() {
                       <th>Actions</th>
                     </tr>
                   </thead>
-
                   <tbody>
                     {skills.map((skill) => (
                       <tr key={skill.id}>
@@ -483,7 +650,6 @@ function AdminPage() {
                             >
                               Edit
                             </button>
-
                             <button
                               className="admin-delete-button"
                               type="button"
@@ -501,13 +667,163 @@ function AdminPage() {
             )}
           </section>
 
-          <section className="admin-management-card admin-coming-soon">
-            <p className="admin-eyebrow">NEXT STEP</p>
-            <h2>Projects Management</h2>
-            <p className="admin-description">
-              After testing skills management, we'll add forms to create, edit,
-              and delete projects.
-            </p>
+          <section className="admin-management-card" ref={projectFormRef}>
+            <p className="admin-eyebrow">PORTFOLIO PROJECTS</p>
+            <h2>
+              {editingProjectId !== null ? 'Edit Project' : 'Add a Project'}
+            </h2>
+
+            <form className="admin-skill-form" onSubmit={handleProjectSubmit}>
+              <div className="admin-field">
+                <label htmlFor="project-title">Project Title</label>
+                <input
+                  ref={projectTitleInputRef}
+                  id="project-title"
+                  type="text"
+                  placeholder="Example: Library Management Application"
+                  value={projectTitle}
+                  onChange={(event) => setProjectTitle(event.target.value)}
+                  maxLength={200}
+                  required
+                />
+              </div>
+
+              <div className="admin-field">
+                <label htmlFor="project-technologies">Technologies</label>
+                <input
+                  id="project-technologies"
+                  type="text"
+                  placeholder="Example: Java, Spring Boot, PostgreSQL"
+                  value={projectTechnologies}
+                  onChange={(event) =>
+                    setProjectTechnologies(event.target.value)
+                  }
+                  maxLength={500}
+                  required
+                />
+              </div>
+
+              <div className="admin-field admin-project-description-field">
+                <label htmlFor="project-description">Description</label>
+                <textarea
+                  id="project-description"
+                  rows={4}
+                  placeholder="Describe your project and its features."
+                  value={projectDescription}
+                  onChange={(event) =>
+                    setProjectDescription(event.target.value)
+                  }
+                  maxLength={3000}
+                  required
+                />
+              </div>
+
+              <div className="admin-form-actions">
+                <button
+                  className="admin-submit admin-form-submit"
+                  type="submit"
+                  disabled={savingProject}
+                >
+                  {savingProject
+                    ? 'Saving...'
+                    : editingProjectId !== null
+                      ? 'Update Project'
+                      : 'Add Project'}
+                </button>
+
+                {editingProjectId !== null && (
+                  <button
+                    className="admin-cancel-button"
+                    type="button"
+                    onClick={resetProjectForm}
+                  >
+                    Cancel
+                  </button>
+                )}
+              </div>
+            </form>
+
+            {projectMessage && (
+              <p className="admin-success" role="status">
+                {projectMessage}
+              </p>
+            )}
+            {projectsError && (
+              <p className="admin-error" role="alert">
+                {projectsError}
+              </p>
+            )}
+          </section>
+
+          <section className="admin-management-card">
+            <div className="admin-list-heading">
+              <div>
+                <p className="admin-eyebrow">DATABASE RECORDS</p>
+                <h2>Existing Projects</h2>
+              </div>
+              <button
+                className="admin-refresh-button"
+                type="button"
+                onClick={() => loadProjects(credentials.authorization)}
+                disabled={projectsLoading}
+              >
+                {projectsLoading ? 'Loading...' : 'Refresh'}
+              </button>
+            </div>
+
+            {projectsLoading && projects.length === 0 && (
+              <p className="admin-description">Loading projects...</p>
+            )}
+
+            {!projectsLoading && projects.length === 0 && !projectsError && (
+              <p className="admin-description">
+                No projects are stored in the database yet.
+              </p>
+            )}
+
+            {projects.length > 0 && (
+              <div className="admin-table-wrapper">
+                <table className="admin-table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Project</th>
+                      <th>Description</th>
+                      <th>Technologies</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {projects.map((project) => (
+                      <tr key={project.id}>
+                        <td>{project.id}</td>
+                        <td>{project.title}</td>
+                        <td>{project.description}</td>
+                        <td>{project.technologies}</td>
+                        <td>
+                          <div className="admin-row-actions">
+                            <button
+                              className="admin-edit-button"
+                              type="button"
+                              onClick={() => startEditingProject(project)}
+                            >
+                              Edit
+                            </button>
+                            <button
+                              className="admin-delete-button"
+                              type="button"
+                              onClick={() => handleDeleteProject(project)}
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </section>
         </section>
       )}
