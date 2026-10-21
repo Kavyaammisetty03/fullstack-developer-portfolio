@@ -56,9 +56,13 @@ const additionalSkills = [
 function App() {
   const [portfolio, setPortfolio] = useState(null);
   const [skills, setSkills] = useState([]);
+  const [projects, setProjects] = useState([]);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [skillsError, setSkillsError] = useState('');
+  const [projectsLoading, setProjectsLoading] = useState(true);
+  const [projectsError, setProjectsError] = useState('');
 
   useEffect(() => {
     fetch('http://localhost:8080/api/portfolio')
@@ -93,6 +97,28 @@ function App() {
       })
       .catch(() => {
         setSkillsError('Unable to load skills from the database.');
+      });
+
+    fetch('http://localhost:8080/api/projects')
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch projects');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        if (!Array.isArray(data)) {
+          throw new Error('Invalid projects response');
+        }
+        setProjects(data);
+      })
+      .catch(() => {
+        setProjectsError(
+          'Unable to load projects. Please check the Projects API.'
+        );
+      })
+      .finally(() => {
+        setProjectsLoading(false);
       });
   }, []);
 
@@ -227,104 +253,51 @@ function App() {
           <p className="section-label">MY WORK</p>
           <h2>Featured Projects</h2>
 
+          {projectsLoading && (
+            <p className="status-message">Loading projects...</p>
+          )}
+
+          {projectsError && (
+            <p className="status-message">{projectsError}</p>
+          )}
+
+          {!projectsLoading &&
+            !projectsError &&
+            projects.length === 0 && (
+              <p className="status-message">
+                No projects are available yet.
+              </p>
+            )}
+
           <div className="projects-grid">
-            <article className="project-card">
-              <span className="project-number">01</span>
-              <h3>Library Management Application</h3>
-              <p>
-                Developed a Library Management Application using Java,
-                Spring Boot, and PostgreSQL to manage library operations
-                efficiently. Implemented user authentication and
-                role-based access control to ensure secure access to
-                application features. Developed REST APIs for book search,
-                book upload, availability checking, purchasing, and
-                returning books. Used Spring Data JPA and Hibernate for
-                database operations and followed a layered architecture
-                consisting of Entity, Repository, Service, and Controller
-                layers. Utilized Maven for dependency management and Git
-                for version control to maintain clean, modular, and
-                maintainable code.
-              </p>
+            {projects.map((project, index) => {
+              const technologies = Array.isArray(project.technologies)
+                ? project.technologies
+                : typeof project.technologies === 'string'
+                  ? project.technologies.split(',')
+                  : [];
 
-              <div className="project-tags">
-                <span>Java</span>
-                <span>Spring Boot</span>
-                <span>PostgreSQL</span>
-              </div>
-            </article>
+              return (
+                <article className="project-card" key={project.id}>
+                  <span className="project-number">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
 
-            <article className="project-card">
-              <span className="project-number">02</span>
-              <h3>RailPharma</h3>
-              <p>
-                RailPharma is a Medicine Delivery Website developed to
-                simplify the process of searching for and ordering
-                medicines online. The application allows users to browse
-                available medicines, view product details, and place
-                medicine orders conveniently. Developed using web
-                technologies, the project focuses on providing a
-                user-friendly interface and an efficient medicine ordering
-                experience. It aims to improve accessibility to medicines
-                by making the process of finding and ordering pharmaceutical
-                products easier and more convenient.
-              </p>
+                  <h3>{project.title}</h3>
 
-              <div className="project-tags">
-                <span>HTML</span>
-                <span>CSS</span>
-                <span>JavaScript</span>
-                <span>SQL</span>
-                <span>React.js</span>
-              </div>
-            </article>
+                  <p>{project.description}</p>
 
-            <article className="project-card">
-              <span className="project-number">03</span>
-              <h3>AI Road Safety System</h3>
-              <p>
-                Developed an AI-Driven Road Safety System to improve road
-                safety by identifying potholes and analyzing road
-                conditions using artificial intelligence. The application
-                allows users to upload road images for pothole detection
-                and highlights detected potholes in red to make damaged
-                areas easily identifiable. It also includes user
-                registration and login, a dashboard displaying vehicle
-                and road-related information, and a route analysis feature
-                to help users assess road conditions. The project aims to
-                support safer travel by enabling better road condition
-                monitoring and helping identify potentially hazardous
-                road areas.
-              </p>
-
-              <div className="project-tags">
-                <span>AI</span>
-                <span>Python</span>
-                <span>Web Development</span>
-              </div>
-            </article>
-
-            <article className="project-card">
-              <span className="project-number">04</span>
-              <h3>Fitness Tracker</h3>
-              <p>
-                Developed a Fitness Tracker Application using HTML, CSS,
-                and JavaScript to promote healthy lifestyles among
-                children, adults, and women. The application provides
-                basic fitness guidance, including yoga poses, exercises,
-                and wellness activities suitable for different age groups.
-                Designed a simple, user-friendly interface to help users
-                explore fitness routines and encourage regular physical
-                activity. The project focuses on creating awareness about
-                fitness, flexibility, and maintaining a healthy lifestyle
-                through accessible and easy-to-follow activities.
-              </p>
-
-              <div className="project-tags">
-                <span>HTML</span>
-                <span>CSS</span>
-                <span>JavaScript</span>
-              </div>
-            </article>
+                  <div className="project-tags">
+                    {technologies
+                      .map((technology) => technology.trim())
+                      .filter(Boolean)
+                      .map((technology) => (
+                        <span key={technology}>{technology}</span>
+                      ))}
+                  </div>
+                </article>
+              );
+            })}
           </div>
         </section>
 

@@ -156,3 +156,9 @@ END OF PROJECT PROGRESS
 - Removed the unresolved library-management dependency from backend/pom.xml.
 - Connected React App.jsx to GET /api/skills.
 - Tested the frontend successfully; skills are displayed.
+
+[2026-10-21] Projects API Integration
+- Created Project entity, ProjectRepository, ProjectService, and ProjectController.
+- Added the GET /api/projects endpoint.
+- Connected React to fetch projects dynamically.
+- Tested successfully; all four projects are displayed correctly.
