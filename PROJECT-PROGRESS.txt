@@ -162,3 +162,11 @@ END OF PROJECT PROGRESS
 - Added the GET /api/projects endpoint.
 - Connected React to fetch projects dynamically.
 - Tested successfully; all four projects are displayed correctly.
+
+[2026-10-21] Spring Security Integration
+- Added Spring Security dependency to the backend.
+- Configured admin credentials through environment variables.
+- Allowed public GET requests for portfolio APIs.
+- Protected write operations with HTTP Basic authentication.
+- Tested authenticated skill creation, update, and deletion.
+- Verified that deleted test skills return 404.
